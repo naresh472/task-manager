@@ -21,8 +21,22 @@
       <div class="card shadow-lg border-0 rounded-4">
         <div class="card-body p-4">
           <h3 class="text-center mb-4 fw-bold">Login</h3>
+
+           <!-- Alerts Section -->
+          <?php if (!empty($controller->success)) : ?>
+            <div class="alert alert-success text-center fw-semibold mx-auto w-75" role="alert">
+              <?php echo $controller->success; ?>
+            </div>
+          <?php endif; ?>
+
+          <?php if (!empty($controller->error)) : ?>
+            <div class="alert alert-danger text-center fw-semibold mx-auto w-75" role="alert">
+              <?php echo $controller->error; ?>
+            </div>
+          <?php endif; ?>
+          <!-- End Alerts -->
           
-          <form method="post" action="/user/login">
+          <form method="post" action="index.php?page=login">
             
            
             <div class="mb-3">
@@ -43,7 +57,7 @@
 
             <p class="text-center mb-0">
               Don’t have an account? 
-              <a href="./register.php" class="text-decoration-none fw-semibold">Go to Register</a>
+              <a href="index.php?page=register" class="text-decoration-none fw-semibold">Go to Register</a>
             </p>
           </form>
 
