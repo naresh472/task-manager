@@ -10,41 +10,33 @@ class User{
 
     public function register($name,$email,$password)
     {
-            $stmt = mysqli_prepare($this->con, "SELECT id FROM user WHERE email = ?");
-            mysqli_stmt_bind_param($stmt, "s", $email);
-            mysqli_stmt_execute($stmt);
-            mysqli_stmt_store_result($stmt);
-            $count = mysqli_stmt_num_rows($stmt);
-            mysqli_stmt_close($stmt);
+            $query = "select id from user WHERE email = '$email'";
+            $result = mysqli_query($this->con, $query);
 
-            if ($count > 0) {
-                
+            if (mysqli_num_rows($result) > 0)
+            {
                 return false;
             }
 
-            
             $passwordHash = password_hash($password, PASSWORD_DEFAULT);
-
-           
-            $stmt = mysqli_prepare($this->con, "INSERT INTO user (name, email, password) VALUES (?, ?, ?)");
-            mysqli_stmt_bind_param($stmt, "sss", $name, $email, $passwordHash);
-            $result = mysqli_stmt_execute($stmt);
-            mysqli_stmt_close($stmt);
+            $query = "insert into user (name, email, password) values ('$name', '$email', '$passwordHash')";
+            $result = mysqli_query($this->con, $query);
 
             return $result;
     }
 
     public function login($email,$password)
     {
-        $query = "SELECT * FROM user WHERE email = ?";
-        $stmt = mysqli_prepare($this->con, $query);
-        mysqli_stmt_bind_param($stmt, "s", $email);
-        mysqli_stmt_execute($stmt);
-        $res = mysqli_stmt_get_result($stmt);
+        $query = "SELECT * FROM user WHERE email = '$email'";
+        $res = mysqli_query($this->con, $query);
         $user = mysqli_fetch_assoc($res);
-        mysqli_stmt_close($stmt);
 
-        return ($user && password_verify($password, $user['password'])) ? $user : false;
+        if ($user && password_verify($password, $user['password'])) {
+            return $user;
+        }
+        return false;
+
+        
     }
 }
 
