@@ -4,17 +4,29 @@
   <!-- Page Header -->
   <div class="d-flex justify-content-between align-items-center mb-4">
     <h2 class="text-primary fw-bold"><i class="bi bi-list-task"></i> Task Manager</h2>
-    <a href="index.php?controller=task&action=create" class="btn btn-success">
-      <i class="bi bi-plus-circle"></i> Create New Task
-    </a>
+   <nav class="navbar navbar-expand-lg navbar-light bg-light shadow-sm">
+   
+      
+      <div class="d-flex ms-auto gap-2">
+        <a href="index.php?page=create" class="btn btn-success">
+          <i class="bi bi-plus-circle"></i> Create New Task
+        </a>
+        <a href="index.php?page=logout" class="btn btn-outline-danger">
+          <i class="bi bi-box-arrow-right"></i> Logout
+        </a>
+      </div>
+    
+  </nav>
+
+   
   </div>
 
   <!-- Search Bar -->
   <form method="GET" action="index.php" class="row g-3 mb-3">
-    <input type="hidden" name="controller" value="task">
-    <input type="hidden" name="action" value="search">
+    
+    <input type="hidden" name="page" value="home">
     <div class="col-md-10">
-      <input type="text" name="keyword" class="form-control" placeholder="🔍 Search tasks by title or description" value="<?php echo isset($_GET['keyword']) ? htmlspecialchars($_GET['keyword']) : ''; ?>">
+      <input type="text" name="q" class="form-control" placeholder="🔍 Search tasks by title or description" value="<?php echo isset($_GET['keyword']) ? htmlspecialchars($_GET['keyword']) : ''; ?>">
     </div>
     <div class="col-md-2 d-grid">
       <button type="submit" class="btn btn-primary"><i class="bi bi-search"></i> Search</button>
@@ -41,7 +53,7 @@
                 <th>Title</th>
                 <th>Description</th>
                 <th>Status</th>
-                <th>Due Date</th>
+                <th>Deadline</th>
                 <th>Created On</th>
                 <th>Actions</th>
               </tr>
@@ -61,13 +73,13 @@
                       <span class="badge bg-success"><i class="bi bi-check-circle"></i> Completed</span>
                     <?php endif; ?>
                   </td>
-                  <td><?php echo htmlspecialchars($task['due_date']); ?></td>
+                  <td><?php echo htmlspecialchars($task['deadline']); ?></td>
                   <td><?php echo htmlspecialchars($task['created_at']); ?></td>
                   <td>
-                    <a href="index.php?controller=task&action=edit&id=<?php echo $task['id']; ?>" class="btn btn-sm btn-outline-primary">
+                    <a href="index.php?page=edit&id=<?php echo $task['id']; ?>" class="btn btn-sm btn-outline-primary">
                       <i class="bi bi-pencil"></i> Edit
                     </a>
-                    <a href="index.php?controller=task&action=delete&id=<?php echo $task['id']; ?>" class="btn btn-sm btn-outline-danger" onclick="return confirm('Are you sure you want to delete this task?');">
+                    <a href="index.php?page=delete&id=<?php echo $task['id']; ?>" class="btn btn-sm btn-outline-danger" onclick="return confirm('Are you sure you want to delete this task?');">
                       <i class="bi bi-trash"></i> Delete
                     </a>
                   </td>

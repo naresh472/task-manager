@@ -1,33 +1,113 @@
 <?php
 class Task {
-    private $con;
-    public function __construct($con) { $this->con = $con; }
+    private $con; // mysqli connection
 
-    public function getTasks($uid) {
-        $res = mysqli_query($this->con, "SELECT * FROM tasks WHERE user_id='$uid' ORDER BY deadline ASC");
-        return mysqli_fetch_all($res, MYSQLI_ASSOC);
+    public function __construct($con) {
+        $this->con = $con;
     }
 
-    public function getTask($id) {
-        $res = mysqli_query($this->con, "SELECT * FROM tasks WHERE id='$id'");
-        return mysqli_fetch_assoc($res);
+    // Create a new task
+ public function create($user_id, $data) {
+    $user_id = (int)$user_id;
+    $title = mysqli_real_escape_string($this->con, $data['title']);
+    $description = mysqli_real_escape_string($this->con, $data['description'] ?? '');
+    $deadline = !empty($data['deadline']) ? "'".mysqli_real_escape_string($this->con, $data['deadline'])."'" : "NULL";
+    $priority = in_array($data['priority'], ['High','Medium','Low']) ? $data['priority'] : 'Medium';
+    $status = in_array($data['status'], ['Pending','In Progress','Completed']) ? $data['status'] : 'Pending';
+
+    $sql = "INSERT INTO tasks (user_id, title, description, deadline, priority, status, created_at, updated_at) 
+            VALUES ($user_id, '$title', '$description', $deadline, '$priority', '$status', NOW(), NOW())";
+
+    if (!mysqli_query($this->con, $sql)) {
+        die("Insert failed: " . mysqli_error($this->con));
     }
 
-    public function addTask($uid, $title, $desc, $deadline, $priority) {
-        return mysqli_query($this->con, "INSERT INTO tasks (user_id,title,description,deadline,priority,status) VALUES ('$uid','$title','$desc','$deadline','$priority','Pending')");
+    return true;
+}
+
+    // Get all tasks with optional search, filter, sort
+    public function getAll($user_id, $q='', $status='', $priority='', $sort='created_at_desc') {
+        $user_id = (int)$user_id;
+        $sql = "SELECT * FROM tasks WHERE user_id=$user_id";
+
+        if ($q) {
+            $q = mysqli_real_escape_string($this->con, $q);
+            $sql .= " AND (title LIKE '%$q%' OR description LIKE '%$q%')";
+        }
+
+        if ($status) {
+            $status = mysqli_real_escape_string($this->con, $status);
+            $sql .= " AND status='$status'";
+        }
+
+        if ($priority) {
+            $priority = mysqli_real_escape_string($this->con, $priority);
+            $sql .= " AND priority='$priority'";
+        }
+
+        switch ($sort) {
+            case 'deadline_asc':
+                $sql .= " ORDER BY deadline ASC";
+                break;
+            case 'deadline_desc':
+                $sql .= " ORDER BY deadline DESC";
+                break;
+            case 'priority':
+                $sql .= " ORDER BY FIELD(priority,'High','Medium','Low')";
+                break;
+            default:
+                $sql .= " ORDER BY created_at DESC";
+        }
+
+        $result = mysqli_query($this->con, $sql);
+        $tasks = [];
+        while ($row = mysqli_fetch_assoc($result)) {
+            $tasks[] = $row;
+        }
+        return $tasks;
     }
 
-    public function updateTask($id, $data) {
-        $title = $data['title'];
-        $desc = $data['description'];
-        $deadline = $data['deadline'];
-        $priority = $data['priority'];
-        $status = $data['status'];
-        return mysqli_query($this->con, "UPDATE tasks SET title='$title',description='$desc',deadline='$deadline',priority='$priority',status='$status' WHERE id='$id'");
+    // Get single task by ID
+    public function getById($id) {
+        $id = (int)$id;
+        $sql = "SELECT * FROM tasks WHERE id=$id LIMIT 1";
+        $result = mysqli_query($this->con, $sql);
+        return mysqli_fetch_assoc($result);
     }
 
-    public function deleteTask($id) {
-        return mysqli_query($this->con, "DELETE FROM tasks WHERE id='$id'");
+    // Update task
+    public function update($id, $data) {
+        $id = (int)$id;
+        $title = mysqli_real_escape_string($this->con, $data['title']);
+        $description = mysqli_real_escape_string($this->con, $data['description']);
+        $deadline = mysqli_real_escape_string($this->con, $data['deadline']);
+        $priority = mysqli_real_escape_string($this->con, $data['priority']);
+        $status = mysqli_real_escape_string($this->con, $data['status']);
+
+        $sql = "UPDATE tasks SET title='$title', description='$description', deadline='$deadline', 
+                priority='$priority', status='$status' WHERE id=$id";
+        return mysqli_query($this->con, $sql);
+    }
+
+    // Delete task
+    public function delete($id, $user_id) {
+        $id = (int)$id;
+        $user_id = (int)$user_id;
+        $sql = "DELETE FROM tasks WHERE id=$id AND user_id=$user_id";
+        return mysqli_query($this->con, $sql);
+    }
+
+    // Count tasks by status
+    public function countsByStatus($user_id) {
+        $user_id = (int)$user_id;
+        $sql = "SELECT status, COUNT(*) as cnt FROM tasks WHERE user_id=$user_id GROUP BY status";
+        $result = mysqli_query($this->con, $sql);
+
+        $counts = ['Pending'=>0, 'In Progress'=>0, 'Completed'=>0];
+        while ($row = mysqli_fetch_assoc($result)) {
+            $counts[$row['status']] = (int)$row['cnt'];
+        }
+        return $counts;
     }
 }
 ?>

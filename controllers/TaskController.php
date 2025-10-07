@@ -1,46 +1,105 @@
 <?php
-require_once "models/Task.php";
+require_once __DIR__ . '/../models/Task.php';
+require_once __DIR__ . '/../helpers/auth.php';
 
 class TaskController {
     private $taskModel;
 
     public function __construct($con) {
+        // Pass PDO into Task model (no need to store $pdo separately)
         $this->taskModel = new Task($con);
     }
 
-    public function tasks() {
-        $tasks = $this->taskModel->getTasks($_SESSION['user']['id']);
-        include "views/tasks/index.php";
+    public function dashboard() {
+        requireLogin();
+        $uid = currentUserId();
+        $counts = $this->taskModel->countsByStatus($uid);
+
+        // Pass data into view
+        $data = [
+            'counts' => $counts
+        ];
+        include __DIR__ . '/../views/home.php';
     }
 
-    public function task_create() {
-        if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-            $title = $_POST['title'];
-            $desc = $_POST['description'];
-            $deadline = $_POST['deadline'];
-            $priority = $_POST['priority'];
+    public function index() {
+        requireLogin();
+        $uid = currentUserId();
 
-            $this->taskModel->addTask($_SESSION['user']['id'], $title, $desc, $deadline, $priority);
-            redirect("index.php?action=tasks");
+        $q = $_GET['q'] ?? '';
+        $status = $_GET['status'] ?? '';
+        $priority = $_GET['priority'] ?? '';
+        $sort = $_GET['sort'] ?? 'created_at_desc';
+
+        $tasks = $this->taskModel->getAll($uid, $q, $status, $priority, $sort);
+
+        $data = [
+            'tasks' => $tasks
+        ];
+        include __DIR__ . '/../views/home.php';
+    }
+
+    public function create() {
+        requireLogin();
+
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            $data = [
+                'title'       => trim($_POST['title']),
+                'description' => trim($_POST['description']),
+                'deadline'    => $_POST['deadline'] ?: null,
+                'priority'    => $_POST['priority'] ?: 'Medium',
+                'status'      => $_POST['status'] ?: 'Pending'
+            ];
+
+            $result=$this->taskModel->create(currentUserId(), $data);
+            if ($result) {
+                $_SESSION['message'] = "Task created successfully!";
+            } else {
+                $_SESSION['message'] = "Error: " . mysqli_error($this->con);
+            }
+
+            header('Location: index.php?page=home');
+            exit;
         }
-        include "views/tasks/create.php";
+
+        include __DIR__ . '/../views/create.php';
     }
 
-    public function task_edit() {
-        $id = $_GET['id'];
-        $task = $this->taskModel->getTask($id);
+    public function edit($id    ) {
+        requireLogin();
 
-        if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-            $this->taskModel->updateTask($id, $_POST);
-            redirect("index.php?action=tasks");
+        $task = $this->taskModel->getById($id);
+
+        if (!$task || $task['user_id'] != currentUserId()) {
+            header('Location: index.php?page=home');
+            exit;
         }
-        include "views/tasks/edit.php";
+
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            $data = [
+                'title'       => trim($_POST['title']),
+                'description' => trim($_POST['description']),
+                'deadline'    => $_POST['deadline'] ?: null,
+                'priority'    => $_POST['priority'] ?: 'Medium',
+                'status'      => $_POST['status'] ?: 'Pending'
+            ];
+
+            $this->taskModel->update($id, $data);
+
+            header('Location: index.php?page=home');
+            exit;
+        }
+
+        $data = [
+            'task' => $task
+        ];
+        include __DIR__ . '/../views/edit.php';
     }
 
-    public function task_delete() {
-        $id = $_GET['id'];
-        $this->taskModel->deleteTask($id);
-        redirect("index.php?action=tasks");
+    public function delete($id) {
+        requireLogin();
+        $this->taskModel->delete($id, currentUserId());
+        header('Location: index.php?page=home');
+        exit;
     }
 }
-?>

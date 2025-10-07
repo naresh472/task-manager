@@ -53,5 +53,11 @@ class UserController{
             }
         }
     }
+
+
+    public function logout(){
+        session_destroy();
+        include __DIR__ . '/../views/login.php';
+    }
 }
 ?>
