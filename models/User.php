@@ -8,7 +8,7 @@ class User{
         $this->con = $con;
     }
 
-    public function register($name,$email,$password)
+    public function register($name,$email,$password,$ans)
     {
             $query = "select id from users WHERE email = '$email'";
             $result = mysqli_query($this->con, $query);
@@ -19,7 +19,7 @@ class User{
             }
 
             $passwordHash = password_hash($password, PASSWORD_DEFAULT);
-            $query = "insert into users (name, email, password) values ('$name', '$email', '$passwordHash')";
+            $query = "insert into users (name, email, password,security_ans) values ('$name', '$email', '$passwordHash','$ans')";
             $result = mysqli_query($this->con, $query);
 
             return $result;
@@ -37,6 +37,23 @@ class User{
         return false;
 
         
+    }
+
+    public function resetPassword($email, $securityAns, $newPassword)
+    {
+        
+        $query = "SELECT id FROM users WHERE email = '$email' AND security_ans = '$securityAns'";
+        $result = mysqli_query($this->con, $query);
+
+        if (mysqli_num_rows($result) === 1) {
+            $passwordHash = password_hash($newPassword, PASSWORD_DEFAULT);
+            $updateQuery = "UPDATE users SET password = '$passwordHash' WHERE email = '$email'";
+            $updateResult = mysqli_query($this->con, $updateQuery);
+
+            return $updateResult; 
+        } else {
+            return false; 
+        }
     }
 }
 

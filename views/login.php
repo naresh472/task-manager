@@ -22,8 +22,6 @@
         <div class="card-body p-4">
           <h3 class="text-center mb-4 fw-bold">Login</h3>
 
-        
-       
           <?php if (!empty($userController->success)) : ?>
             <div class="alert alert-success text-center fw-semibold mx-auto w-75" role="alert">
               <?php echo $userController->success; ?>
@@ -36,24 +34,29 @@
             </div>
           <?php endif; ?>
         
-          
           <form method="post" action="index.php?page=login">
             
-           
             <div class="mb-3">
               <label for="email" class="form-label">Email</label>
               <input type="email" name="email" id="email" class="form-control" required>
             </div>
 
-           
             <div class="mb-3">
               <label for="password" class="form-label">Password</label>
               <input type="password" name="password" id="password" class="form-control" required>
             </div>
 
+          
             
+
             <div class="d-grid mb-3">
               <button type="submit" class="btn btn-primary btn-lg rounded-3">Login</button>
+            </div>
+
+            <div class="text-end mb-3">
+              <a href="index.php?page=forgot_password" class="text-decoration-none text-danger fw-semibold">
+                Forgot Password?
+              </a>
             </div>
 
             <p class="text-center mb-0">
@@ -69,8 +72,7 @@
   </div>
 </div>
 
-<!-- Bootstrap JS -->
+
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
-

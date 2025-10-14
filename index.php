@@ -23,6 +23,11 @@ switch ($page) {
         $userController->logout();
         break;
 
+    case 'forgot_password':
+          $userController->resetPassword();
+          include "./views/forget_password.php";
+         exit;
+
     case 'home':
          $taskController->index();
          break;

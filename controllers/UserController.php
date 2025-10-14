@@ -22,16 +22,17 @@ class UserController{
             $email = $_POST["email"];
             $password = $_POST["password"];
             $confirm = $_POST["confirm_password"];
+            $ans = $_POST["favorite_movie"];
 
             if ($password !== $confirm) {
                 $this->error = "Passwords do not match!";
                 return;
             }
 
-            if ($this->userModel->register($name, $email, $password)) {
+            if ($this->userModel->register($name, $email, $password,$ans)) {
                 $this->success = "User registered successfully!";
             } else {
-                $this->error = "Error while registering. Email might already exist!";
+                $this->error = "Email already exist!";
             }
         }
     }
@@ -58,6 +59,26 @@ class UserController{
     public function logout(){
         session_destroy();
         include __DIR__ . '/../views/login.php';
+    }
+
+    public function resetPassword(){
+        if ($_SERVER["REQUEST_METHOD"] == "POST") {
+            $email = $_POST["email"];
+            $password = $_POST["new_password"];
+            $confirm = $_POST["confirm_password"];
+            $ans = $_POST["favorite_movie"];
+
+            if ($password !== $confirm) {
+                $this->error = "Passwords do not match!";
+                return;
+            }
+
+            if ($this->userModel->resetPassword($email,$ans,$password)) {
+                $this->success = "Password changed successfully!";
+            } else {
+                $this->error = "User not found or security answer incorrect";
+            }
+        }
     }
 }
 ?>

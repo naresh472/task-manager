@@ -54,6 +54,11 @@
               <input type="password" name="confirm_password" id="confirm_password" class="form-control" required>
             </div>
 
+            <div class="mb-3">
+              <label for="favorite_movie" class="form-label">Your Favorite Movie (for password recovery)</label>
+              <input type="text" name="favorite_movie" id="favorite_movie" class="form-control" required>
+            </div>
+
             <div class="d-grid mb-3">
               <button type="submit" class="btn btn-primary btn-lg rounded-3">Register</button>
             </div>
