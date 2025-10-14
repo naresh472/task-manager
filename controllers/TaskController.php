@@ -6,7 +6,6 @@ class TaskController {
     private $taskModel;
 
     public function __construct($con) {
-        // Pass PDO into Task model (no need to store $pdo separately)
         $this->taskModel = new Task($con);
     }
 
@@ -15,7 +14,7 @@ class TaskController {
         $uid = currentUserId();
         $counts = $this->taskModel->countsByStatus($uid);
 
-        // Pass data into view
+       
         $data = [
             'counts' => $counts
         ];

@@ -1,7 +1,7 @@
 <?php include 'partials/header.php'; ?>
 <div class="container mt-4">
 
-  <!-- Page Header -->
+
   <div class="d-flex justify-content-between align-items-center mb-4">
     <h2 class="text-primary fw-bold"><i class="bi bi-list-task"></i> Task Manager</h2>
    <nav class="navbar navbar-expand-lg navbar-light bg-light shadow-sm">
@@ -21,7 +21,7 @@
    
   </div>
 
-  <!-- Search Bar -->
+
   <form method="GET" action="index.php" class="row g-3 mb-3">
     
     <input type="hidden" name="page" value="home">
@@ -33,7 +33,6 @@
     </div>
   </form>
 
-  <!-- Flash Message -->
   <?php if (isset($_SESSION['message'])): ?>
     <div class="alert alert-info alert-dismissible fade show" role="alert">
       <?php echo $_SESSION['message']; unset($_SESSION['message']); ?>
@@ -41,7 +40,6 @@
     </div>
   <?php endif; ?>
 
-  <!-- Task Table -->
   <div class="card shadow-lg border-0">
     <div class="card-body">
       <?php if (!empty($tasks)): ?>

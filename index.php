@@ -1,14 +1,11 @@
 <?php
 require_once __DIR__ . "/config.php";
-
-// Controllers
 require_once __DIR__ . "/controllers/UserController.php";
 require_once __DIR__ . "/controllers/TaskController.php";
 
 $userController = new UserController($con);
 $taskController = new TaskController($con);
 
-// Determine current page
 $page = $_GET['page'] ?? 'login';
 
 switch ($page) {

@@ -1,7 +1,7 @@
 <?php include 'partials/header.php'; ?>
 <div class="container mt-4">
 
-  <!-- Page Header -->
+ 
   <div class="d-flex justify-content-between align-items-center mb-4">
     <h2 class="text-success fw-bold"><i class="bi bi-plus-circle"></i> Create New Task</h2>
     <a href="index.php?page=home" class="btn btn-outline-secondary">
@@ -9,7 +9,7 @@
     </a>
   </div>
 
-  <!-- Flash Message -->
+  
   <?php if (isset($_SESSION['message'])): ?>
     <div class="alert alert-info alert-dismissible fade show" role="alert">
       <?php echo $_SESSION['message']; unset($_SESSION['message']); ?>
@@ -17,7 +17,7 @@
     </div>
   <?php endif; ?>
 
-  <!-- Create Task Form -->
+ 
   <div class="card shadow-lg border-0">
     <div class="card-body p-4">
       <form method="POST" action="index.php?page=create">

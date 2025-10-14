@@ -1,31 +1,30 @@
 <?php
 class Task {
-    private $con; // mysqli connection
+    private $con; 
 
     public function __construct($con) {
         $this->con = $con;
     }
 
-    // Create a new task
- public function create($user_id, $data) {
-    $user_id = (int)$user_id;
-    $title = mysqli_real_escape_string($this->con, $data['title']);
-    $description = mysqli_real_escape_string($this->con, $data['description'] ?? '');
-    $deadline = !empty($data['deadline']) ? "'".mysqli_real_escape_string($this->con, $data['deadline'])."'" : "NULL";
-    $priority = in_array($data['priority'], ['High','Medium','Low']) ? $data['priority'] : 'Medium';
-    $status = in_array($data['status'], ['Pending','In Progress','Completed']) ? $data['status'] : 'Pending';
+    public function create($user_id, $data) {
+        $user_id = (int)$user_id;
+        $title = mysqli_real_escape_string($this->con, $data['title']);
+        $description = mysqli_real_escape_string($this->con, $data['description'] ?? '');
+        $deadline = !empty($data['deadline']) ? "'".mysqli_real_escape_string($this->con, $data['deadline'])."'" : "NULL";
+        $priority = mysqli_real_escape_string($data['priority']) ;
+        $status = mysqli_real_escape_string($data['status']) ;
 
-    $sql = "INSERT INTO tasks (user_id, title, description, deadline, priority, status, created_at, updated_at) 
-            VALUES ($user_id, '$title', '$description', $deadline, '$priority', '$status', NOW(), NOW())";
+        $sql = "INSERT INTO tasks (user_id, title, description, deadline, priority, status, created_at, updated_at) 
+                VALUES ($user_id, '$title', '$description', $deadline, '$priority', '$status', NOW(), NOW())";
 
-    if (!mysqli_query($this->con, $sql)) {
-        die("Insert failed: " . mysqli_error($this->con));
+        if (!mysqli_query($this->con, $sql)) {
+            die("Insert failed: " . mysqli_error($this->con));
+        }
+
+        return true;
     }
 
-    return true;
-}
-
-    // Get all tasks with optional search, filter, sort
+   
     public function getAll($user_id, $q='', $status='', $priority='', $sort='created_at_desc') {
         $user_id = (int)$user_id;
         $sql = "SELECT * FROM tasks WHERE user_id=$user_id";
@@ -35,15 +34,15 @@ class Task {
             $sql .= " AND (title LIKE '%$q%' OR description LIKE '%$q%')";
         }
 
-        if ($status) {
-            $status = mysqli_real_escape_string($this->con, $status);
-            $sql .= " AND status='$status'";
-        }
+        // if ($status) {
+        //     $status = mysqli_real_escape_string($this->con, $status);
+        //     $sql .= " AND status='$status'";
+        // }
 
-        if ($priority) {
-            $priority = mysqli_real_escape_string($this->con, $priority);
-            $sql .= " AND priority='$priority'";
-        }
+        // if ($priority) {
+        //     $priority = mysqli_real_escape_string($this->con, $priority);
+        //     $sql .= " AND priority='$priority'";
+        // }
 
         switch ($sort) {
             case 'deadline_asc':
@@ -67,7 +66,7 @@ class Task {
         return $tasks;
     }
 
-    // Get single task by ID
+   
     public function getById($id) {
         $id = (int)$id;
         $sql = "SELECT * FROM tasks WHERE id=$id LIMIT 1";
@@ -75,7 +74,7 @@ class Task {
         return mysqli_fetch_assoc($result);
     }
 
-    // Update task
+    
     public function update($id, $data) {
         $id = (int)$id;
         $title = mysqli_real_escape_string($this->con, $data['title']);
@@ -89,7 +88,7 @@ class Task {
         return mysqli_query($this->con, $sql);
     }
 
-    // Delete task
+    
     public function delete($id, $user_id) {
         $id = (int)$id;
         $user_id = (int)$user_id;
@@ -97,7 +96,7 @@ class Task {
         return mysqli_query($this->con, $sql);
     }
 
-    // Count tasks by status
+   
     public function countsByStatus($user_id) {
         $user_id = (int)$user_id;
         $sql = "SELECT status, COUNT(*) as cnt FROM tasks WHERE user_id=$user_id GROUP BY status";

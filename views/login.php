@@ -22,19 +22,20 @@
         <div class="card-body p-4">
           <h3 class="text-center mb-4 fw-bold">Login</h3>
 
-           <!-- Alerts Section -->
-          <?php if (!empty($controller->success)) : ?>
+        
+       
+          <?php if (!empty($userController->success)) : ?>
             <div class="alert alert-success text-center fw-semibold mx-auto w-75" role="alert">
-              <?php echo $controller->success; ?>
+              <?php echo $userController->success; ?>
             </div>
           <?php endif; ?>
 
-          <?php if (!empty($controller->error)) : ?>
+          <?php if (!empty($userController->error)) : ?>
             <div class="alert alert-danger text-center fw-semibold mx-auto w-75" role="alert">
-              <?php echo $controller->error; ?>
+              <?php echo $userController->error; ?>
             </div>
           <?php endif; ?>
-          <!-- End Alerts -->
+        
           
           <form method="post" action="index.php?page=login">
             
