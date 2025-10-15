@@ -22,7 +22,7 @@ class UserController{
             $email = $_POST["email"];
             $password = $_POST["password"];
             $confirm = $_POST["confirm_password"];
-            $ans = $_POST["favorite_movie"];
+            $ans = strtolower($_POST["favorite_movie"]);
 
             if ($password !== $confirm) {
                 $this->error = "Passwords do not match!";
@@ -66,7 +66,7 @@ class UserController{
             $email = $_POST["email"];
             $password = $_POST["new_password"];
             $confirm = $_POST["confirm_password"];
-            $ans = $_POST["favorite_movie"];
+            $ans = strtolower($_POST["favorite_movie"]);
 
             if ($password !== $confirm) {
                 $this->error = "Passwords do not match!";

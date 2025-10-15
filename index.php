@@ -44,7 +44,7 @@ switch ($page) {
          $taskController->delete($_GET['id']);
          exit;
     default: 
-      $taskController->dashboard();
-       break;
+        $userController->logout();
+        break;
 }
 ?>

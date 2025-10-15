@@ -9,28 +9,16 @@ class TaskController {
         $this->taskModel = new Task($con);
     }
 
-    public function dashboard() {
-        requireLogin();
-        $uid = currentUserId();
-        $counts = $this->taskModel->countsByStatus($uid);
-
-       
-        $data = [
-            'counts' => $counts
-        ];
-        include __DIR__ . '/../views/home.php';
-    }
-
     public function index() {
         requireLogin();
         $uid = currentUserId();
 
         $q = $_GET['q'] ?? '';
-        $status = $_GET['status'] ?? '';
-        $priority = $_GET['priority'] ?? '';
-        $sort = $_GET['sort'] ?? 'created_at_desc';
+        // $status = $_GET['status'] ?? '';
+        // $priority = $_GET['priority'] ?? '';
+        // $sort = $_GET['sort'] ?? 'created_at_desc';
 
-        $tasks = $this->taskModel->getAll($uid, $q, $status, $priority, $sort);
+        $tasks = $this->taskModel->getAll($uid, $q);
 
         $data = [
             'tasks' => $tasks
@@ -64,7 +52,7 @@ class TaskController {
         include __DIR__ . '/../views/create.php';
     }
 
-    public function edit($id    ) {
+    public function edit($id) {
         requireLogin();
 
         $task = $this->taskModel->getById($id);

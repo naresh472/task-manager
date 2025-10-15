@@ -25,7 +25,7 @@ class Task {
     }
 
    
-        public function getAll($user_id, $q='', $status='', $priority='', $sort='created_at_desc') {
+        public function getAll($user_id, $q='') {
             $user_id = (int)$user_id;
             $sql = "SELECT * FROM tasks WHERE user_id=$user_id";
 
@@ -34,27 +34,8 @@ class Task {
                 $sql .= " AND (title LIKE '%$q%' OR description LIKE '%$q%')";
             }
 
-            // if ($status) {
-            //     $status = mysqli_real_escape_string($this->con, $status);
-            //     $sql .= " AND status='$status'";
-            // }
-
         
            $sql .= " ORDER BY deadline ASC";
-
-            // switch ($sort) {
-            //     case 'deadline_asc':
-                    
-            //         break;
-            //     case 'deadline_desc':
-            //         $sql .= " ORDER BY deadline DESC";
-            //         break;
-            //     case 'priority':
-            //         $sql .= " ORDER BY FIELD(priority,'High','Medium','Low')";
-            //         break;
-            //     default:
-            //         $sql .= " ORDER BY created_at DESC";
-            // }
 
             $result = mysqli_query($this->con, $sql);
             $tasks = [];
@@ -95,16 +76,6 @@ class Task {
     }
 
    
-    public function countsByStatus($user_id) {
-        $user_id = (int)$user_id;
-        $sql = "SELECT status, COUNT(*) as cnt FROM tasks WHERE user_id=$user_id GROUP BY status";
-        $result = mysqli_query($this->con, $sql);
-
-        $counts = ['Pending'=>0, 'In Progress'=>0, 'Completed'=>0];
-        while ($row = mysqli_fetch_assoc($result)) {
-            $counts[$row['status']] = (int)$row['cnt'];
-        }
-        return $counts;
-    }
+ 
 }
 ?>
