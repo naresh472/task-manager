@@ -36,7 +36,7 @@
           <form method="post" action="index.php?page=register">
             <div class="mb-3">
               <label for="email" class="form-label">Email</label>
-              <input type="email" name="email" id="email" class="form-control" required>
+              <input type="email" name="email" id="email" class="form-control"  pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$" required>
             </div>
 
             <div class="mb-3">

@@ -44,7 +44,7 @@
         <div class="row mb-3">
           <div class="col-md-6">
             <label for="due_date" class="form-label fw-semibold">Due Date</label>
-            <input type="date" id="due_date" name="deadline" class="form-control">
+            <input type="date" id="due_date" name="deadline" class="form-control" required>
           </div>
           <div class="col-md-6">
             <label for="priority" class="form-label fw-semibold">Priority</label>
